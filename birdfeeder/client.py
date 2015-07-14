@@ -16,6 +16,7 @@ def feed(url, solr_url):
 
     for ds in tdsclient.crawl(url, depth=1):
         logger.info(ds.name)
+        solr.add([ dict(id=ds.ID, title=ds.name) ])
 
 def create_parser():
     import argparse
