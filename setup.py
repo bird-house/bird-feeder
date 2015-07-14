@@ -13,6 +13,7 @@ long_description = (
 
 requires = [
     'pysolr',
+    'threddsclient',
     'nose',
     ]
 
