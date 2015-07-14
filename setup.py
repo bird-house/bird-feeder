@@ -12,6 +12,7 @@ long_description = (
 )
 
 requires = [
+    'argcomplete',
     'pysolr',
     'threddsclient',
     'nose',
@@ -43,7 +44,7 @@ setup(name='birdfeeder',
       install_requires=requires,
       entry_points = {
           'console_scripts': [
-              'birdfeeder=birdfeeder:main',
+              'birdfeeder=birdfeeder.client:main',
               ]}     
       ,
       )
