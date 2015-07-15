@@ -1,6 +1,6 @@
 import sys
 
-from .client import feed_from_thredds
+from .client import clear, feed_from_thredds
 
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARN)
@@ -13,7 +13,7 @@ def create_parser():
     parser = argparse.ArgumentParser(
         prog="birdfeeder",
         usage='''birdfeeder [<options>] <command> [<args>]''',
-        description="Feed Solr with Metadata and access URLs from NetCDF files",
+        description="Feeds Solr with Datasets (NetCDF Format) from Thredds Catalogs and File System.",
         )
     parser.add_argument("--debug",
                         help="enable debug mode",
@@ -32,10 +32,18 @@ def create_parser():
             help='Run "birdfeeder <command> -h" to get additional help.'
             )
 
+    # clear command
+    subparser = subparsers.add_parser(
+        'clear',
+        prog="birdfeeder clear",
+        help="Clears the complete solr index. Use with caution!"
+        )
+     
+    # from-thredds command
     subparser = subparsers.add_parser(
         'from-thredds',
         prog="birdfeeder from-thredds",
-        help="Publish datasets to solr."
+        help="Publish datasets from Thredds Catalog to Solr."
         )
 
     subparser.add_argument("--catalog-url",
@@ -57,7 +65,11 @@ def create_parser():
 def execute(args):
     if args.debug:
         logger.setLevel(logging.DEBUG)
-    return feed_from_thredds(service=args.service, catalog_url=args.catalog_url, depth=args.depth)
+    if args.command == 'clear':
+        clear(service=args.service)
+    elif args.command == 'from-thredds':
+        feed_from_thredds(service=args.service, catalog_url=args.catalog_url, depth=args.depth)
+    logger.info('done.')
 
 def main():
     import argcomplete

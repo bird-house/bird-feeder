@@ -1,14 +1,17 @@
+import pysolr
+import threddsclient
+
 import logging
 logger = logging.getLogger(__name__)
 
 
 def clear(service):
-    pass
+    solr = pysolr.Solr(service, timeout=10)
+    logger.info("deletes all datasets from solr %s", service)
+    solr.delete(q='*:*')
+   
 
-
-def feed_from_thredds(service, catalog_url, depth=0):
-    import pysolr
-    import threddsclient
+def feed_from_thredds(service, catalog_url, depth=0):    
     logger.info("solr=%s, thredds catalog=%s", service, catalog_url)
     solr = pysolr.Solr(service, timeout=10)
 
@@ -16,7 +19,7 @@ def feed_from_thredds(service, catalog_url, depth=0):
     for ds in threddsclient.crawl(catalog_url, depth=depth):
         logger.debug("add record %s", ds.name)
         record = dict(
-            id=ds.ID,
+            id=ds.url,
             title=ds.name,
             content_type=ds.content_type,
             last_modified=ds.modified,
