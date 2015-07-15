@@ -19,7 +19,7 @@ def create_parser():
                         help="enable debug mode",
                         action="store_true")
     parser.add_argument("--service",
-                        dest='solr_url',
+                        dest='service',
                         required=False,
                         type=type(''),
                         default='http://localhost:8983/solr/birdhouse',
@@ -57,7 +57,7 @@ def create_parser():
 def execute(args):
     if args.debug:
         logger.setLevel(logging.DEBUG)
-    return feed_from_thredds(args.catalog_url, args.solr_url, args.depth)
+    return feed_from_thredds(service=args.service, catalog_url=args.catalog_url, depth=args.depth)
 
 def main():
     import argcomplete
