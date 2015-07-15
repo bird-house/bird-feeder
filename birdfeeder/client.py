@@ -2,13 +2,13 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def feed(url, solr_url):
+def feed_from_thredds(url, solr_url, depth=0):
     import pysolr
     import threddsclient
     logger.info("tds=%s, solr=%s", url, solr_url)
     solr = pysolr.Solr(solr_url, timeout=10)
 
-    for ds in threddsclient.crawl(url, depth=1):
+    for ds in threddsclient.crawl(url, depth=depth):
         logger.info(ds.name)
         solr.add([ dict(
             id=ds.ID,
