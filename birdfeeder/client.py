@@ -19,7 +19,6 @@ def feed_from_thredds(service, catalog_url, depth=0):
     for ds in threddsclient.crawl(catalog_url, depth=depth):
         logger.debug("add record %s", ds.name)
         record = dict(
-            id=ds.url,
             title=ds.name,
             content_type=ds.content_type,
             last_modified=ds.modified,
@@ -32,5 +31,7 @@ def feed_from_thredds(service, catalog_url, depth=0):
     logger.info("publish %d records", len(records))
     solr.add(records)
 
+def feed_from_directory(service, root):
+    pass
 
 
