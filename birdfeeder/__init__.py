@@ -1,6 +1,6 @@
 import sys
 
-from .client import clear, feed_from_thredds
+from .client import clear, feed_from_thredds, feed_from_directory
 
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARN)
@@ -58,6 +58,26 @@ def create_parser():
                         type=type(0),
                         help="Depth level for Thredds catalog crawler",
                         action="store")
+
+    # from-directory command
+    subparser = subparsers.add_parser(
+        'from-directory',
+        prog="birdfeeder from-directory",
+        help="Publish NetCDF files from directory to Solr."
+        )
+
+    subparser.add_argument("--start-dir",
+                        dest='start_dir',
+                        required=True,
+                        type=type(''),
+                        help="Start directory",
+                        action="store")
+    subparser.add_argument("--maxrecords",
+                        dest='maxrecords',
+                        required=False,
+                        type=type(-1),
+                        help="Maximum number of records that will be published",
+                        action="store")
    
     return parser
 
@@ -69,6 +89,8 @@ def execute(args):
         clear(service=args.service)
     elif args.command == 'from-thredds':
         feed_from_thredds(service=args.service, catalog_url=args.catalog_url, depth=args.depth)
+    elif args.command == 'from-directory':
+        feed_from_directory(service=args.service, start_dir=args.start_dir, maxrecords=args.maxrecords)
     logger.info('done.')
 
 def main():
