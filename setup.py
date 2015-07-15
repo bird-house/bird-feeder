@@ -44,7 +44,7 @@ setup(name='birdfeeder',
       install_requires=requires,
       entry_points = {
           'console_scripts': [
-              'birdfeeder=birdfeeder.client:main',
+              'birdfeeder=birdfeeder:main',
               ]}     
       ,
       )
