@@ -41,10 +41,11 @@ def feed_from_directory(service, start_dir, maxrecords=-1):
     for ds in crawl(start_dir, maxrecords):
         logger.debug("add record %s", ds.name)
         record = dict(
-            title=ds.name,)
+            title=ds.name,
+            url=ds.url)
         records.append(record)
     logger.info("publish %d records", len(records))
-    #solr.add(records)
+    solr.add(records)
         
 
 
