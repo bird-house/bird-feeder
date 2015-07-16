@@ -25,6 +25,20 @@ def create_parser():
                         default='http://localhost:8983/solr/birdhouse',
                         help="Solr URL. Default: http://localhost:8983/solr/birdhouse",
                         action="store")
+    parser.add_argument("--maxrecords",
+                        dest='maxrecords',
+                        required=False,
+                        type=type(-1),
+                        default=-1,
+                        help="Maximum number of records to publish. Default: -1 (unlimited)",
+                        action="store")
+    parser.add_argument("--batch-size",
+                        dest='batch_size',
+                        required=False,
+                        type=type(1),
+                        default=50000,
+                        help="Batch size of records to publish. Default: 50000",
+                        action="store")
     subparsers = parser.add_subparsers(
             dest='command',
             title='command',
@@ -72,12 +86,6 @@ def create_parser():
                         type=type(''),
                         help="Start directory",
                         action="store")
-    subparser.add_argument("--maxrecords",
-                        dest='maxrecords',
-                        required=False,
-                        type=type(-1),
-                        help="Maximum number of records that will be published",
-                        action="store")
    
     return parser
 
@@ -88,9 +96,12 @@ def execute(args):
     if args.command == 'clear':
         clear(service=args.service)
     elif args.command == 'from-thredds':
-        feed_from_thredds(service=args.service, catalog_url=args.catalog_url, depth=args.depth)
+        feed_from_thredds(service=args.service, catalog_url=args.catalog_url, depth=args.depth,
+                          maxrecords=args.maxrecords, batch_size=args.batch_size)
     elif args.command == 'from-directory':
-        feed_from_directory(service=args.service, start_dir=args.start_dir, maxrecords=args.maxrecords)
+        feed_from_directory(service=args.service, start_dir=args.start_dir,
+                            maxrecords=args.maxrecords,
+                            batch_size=args.batch_size)
     logger.info('done.')
 
 def main():

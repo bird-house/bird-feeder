@@ -1,6 +1,6 @@
 import pysolr
 import threddsclient
-from . crawler import crawl
+from . parser import ThreddsParser, NetCDFParser
 
 import logging
 logger = logging.getLogger(__name__)
@@ -12,52 +12,31 @@ def clear(service):
     solr.delete(q='*:*')
    
 
-def feed_from_thredds(service, catalog_url, depth=0):    
+def feed_from_thredds(service, catalog_url, depth=0, maxrecords=-1, batch_size=50000):    
     logger.info("solr=%s, thredds catalog=%s", service, catalog_url)
-    solr = pysolr.Solr(service, timeout=10)
-
-    records = []
-    for ds in threddsclient.crawl(catalog_url, depth=depth):
-        logger.debug("add record %s", ds.name)
-        record = dict(
-            title=ds.name,
-            content_type=ds.content_type,
-            last_modified=ds.modified,
-            resourcename=ds.ID,
-            url=ds.download_url(),
-            opendap_url=ds.opendap_url(),
-            wms_url=ds.wms_url(),
-            catalog_url=ds.url)
-        records.append(record)
-    logger.info("publish %d records", len(records))
-    solr.add(records)
-
+    publish(service, parser=ThreddsParser(catalog_url, depth), maxrecords=maxrecords, batch_size=batch_size)
     
-def feed_from_directory(service, start_dir, maxrecords=-1):
+    
+def feed_from_directory(service, start_dir, maxrecords=-1, batch_size=50000):
     logger.info("solr=%s, start dir=%s", service, start_dir)
+    publish(service, parser=NetCDFParser(start_dir), maxrecords=maxrecord, batch_size=batch_size)
+
+
+def publish(service, parser, maxrecords=-1, batch_size=50000):    
     solr = pysolr.Solr(service, timeout=10)
 
     records = []
-    for metadata in crawl(start_dir, maxrecords):
-        logger.debug("add record %s", metadata)
-        record = dict(
-            title = metadata.get('name'),
-            url = metadata.get('url'),
-            variable = metadata.get('variable'),
-            variable_long_name = metadata.get('variable_long_name'),
-            cf_standard_name = metadata.get('cf_standard_name'),
-            units = metadata.get('units'),
-            comment = metadata.get('comments'),
-            institution = metadata.get('institution'),
-            institute_id = metadata.get('institute_id'),
-            experiment = metadata.get('experiment'),
-            project_id = metadata.get('project_id'),
-            model_id = metadata.get('model_id'),
-            
-            )
-        records.append(record)
+    for metadata in parser.crawl():
+        records.append(metadata)
+        if len(records) >= batch_size:
+            # publish if batch size is reached
+            logger.info("publish %d records", len(records))
+            solr.add(records)
+            records = [] # reset records
+        elif maxrecords >=0 and len(records) >= maxrecords:
+            # stop publishing if max records reached
+            break
     logger.info("publish %d records", len(records))
     solr.add(records)
-        
 
 
