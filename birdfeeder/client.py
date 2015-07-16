@@ -38,11 +38,23 @@ def feed_from_directory(service, start_dir, maxrecords=-1):
     solr = pysolr.Solr(service, timeout=10)
 
     records = []
-    for ds in crawl(start_dir, maxrecords):
-        logger.debug("add record %s", ds.name)
+    for metadata in crawl(start_dir, maxrecords):
+        logger.debug("add record %s", metadata)
         record = dict(
-            title=ds.name,
-            url=ds.url)
+            title = metadata.get('name'),
+            url = metadata.get('url'),
+            variable = metadata.get('variable'),
+            variable_long_name = metadata.get('variable_long_name'),
+            cf_standard_name = metadata.get('cf_standard_name'),
+            units = metadata.get('units'),
+            comment = metadata.get('comments'),
+            institution = metadata.get('institution'),
+            institute_id = metadata.get('institute_id'),
+            experiment = metadata.get('experiment'),
+            project_id = metadata.get('project_id'),
+            model_id = metadata.get('model_id'),
+            
+            )
         records.append(record)
     logger.info("publish %d records", len(records))
     solr.add(records)
