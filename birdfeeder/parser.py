@@ -42,10 +42,19 @@ class ThreddsParser(Parser):
 
 
 class NetCDFParser(Parser):
+    SPATIAL_VARIABLES =  [
+                'longitude', 'lon',
+                'latitude', 'lat',
+                'altitude', 'alt', 'level', 'height',
+                'rotated_pole',
+                'time']
+
+        
     def __init__(self, start_dir):
         Parser.__init__(self)
         self.start_dir = start_dir
 
+            
     def parse(self, filepath):
         logger.debug("parse %s", filepath)
         metadata = {}
@@ -66,12 +75,12 @@ class NetCDFParser(Parser):
 
             # loop over variable attributes
             for key, variable in ds.variables.items():
-                if key in ds.dimensions:
+                if key.lower() in ds.dimensions:
                     # skip dimension variables
                     continue
-                if '_bnds' in key:
+                if '_bnds' in key.lower():
                     continue
-                if key in ['lat', 'lon', 'height', 'rotated_pole']:
+                if key.lower() in self.SPATIAL_VARIABLES:
                     continue
                 self.add_metadata(metadata, 'variable', key)
                 self.add_metadata(metadata, 'variable_long_name', getattr(variable, 'long_name', None) )
