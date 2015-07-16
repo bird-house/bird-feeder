@@ -2,9 +2,9 @@ var Manager;
 
 require.config({
   paths: {
-    core: '../../../core',
-    managers: '../../../managers',
-    widgets: '../../../widgets',
+    core: '../../core',
+    managers: '../../managers',
+    widgets: '../../widgets',
     reuters: '../widgets'
   },
   urlArgs: "bust=" +  (new Date()).getTime()
