@@ -1,9 +1,11 @@
 import os
 from netCDF4 import Dataset
 import threddsclient
+from dateutil import parser as dateparser
 
 import logging
 logger = logging.getLogger(__name__)
+
 
 class Parser(object):
     """
@@ -67,7 +69,15 @@ class NetCDFParser(Parser):
             # loop over global attributes
             for attname in ds.ncattrs():
                 attvalue = getattr(ds, attname)
-                self.add_metadata(metadata, attname, attvalue)
+                if 'date' in attname.lower():
+                    # must format dates in Solr format, if possible
+                    try:
+                        solr_dt = dateparser.parse(attvalue)
+                        self.add_metadata(metadata, attname, solr_dt.strftime('%Y-%m-%dT%H:%M:%SZ') )
+                    except:
+                        pass # disregard this attribute
+                else:
+                    self.add_metadata(metadata, attname, attvalue)
 
             # loop over dimensions
             for key, dim in ds.dimensions.items():
@@ -100,6 +110,8 @@ class NetCDFParser(Parser):
         return metadata
 
     def map_fields(self, metadata):
+        #logger.debug(metadata.keys())
+        
         record = dict(
             title = metadata.get('name'),
             url = metadata.get('url'),
@@ -111,8 +123,12 @@ class NetCDFParser(Parser):
             institution = metadata.get('institution'),
             institute_id = metadata.get('institute_id'),
             experiment = metadata.get('experiment'),
+            experiment_id = metadata.get('experiment_id'),
             project_id = metadata.get('project_id'),
             model_id = metadata.get('model_id'),
+            frequency = metadata.get('frequency'),
+            creation_date = metadata.get('creation_date'),
+            history = metadata.get('history'),
             )
         return record
 
