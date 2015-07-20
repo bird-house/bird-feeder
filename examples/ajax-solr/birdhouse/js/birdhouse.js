@@ -5,7 +5,7 @@ require.config({
     core: '../../core',
     managers: '../../managers',
     widgets: '../../widgets',
-    reuters: '../widgets'
+    birdhouse: '../widgets'
   },
   urlArgs: "bust=" +  (new Date()).getTime()
 });
@@ -15,10 +15,10 @@ require.config({
 define([
   'managers/Manager.jquery',
   'core/ParameterStore',
-  'reuters/ResultWidget',
-  'reuters/TagcloudWidget',
-  'reuters/CurrentSearchWidget.9',
-  'reuters/AutocompleteWidget',
+  'birdhouse/ResultWidget',
+  'birdhouse/TagcloudWidget',
+  'birdhouse/CurrentSearchWidget.9',
+  'birdhouse/AutocompleteWidget',
   'widgets/jquery/PagerWidget'
 ], function () {
   $(function () {
