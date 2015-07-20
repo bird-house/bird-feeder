@@ -39,7 +39,7 @@ define([
         $('#pager-header').html($('<span></span>').text('displaying ' + Math.min(total, offset + 1) + ' to ' + Math.min(total, offset + perPage) + ' of ' + total));
       }
     }));
-    var fields = [ 'title', 'variable' ];
+    var fields = [ 'title', 'source'];
     for (var i = 0, l = fields.length; i < l; i++) {
       Manager.addWidget(new AjaxSolr.TagcloudWidget({
         id: fields[i],
@@ -54,13 +54,13 @@ define([
     Manager.addWidget(new AjaxSolr.AutocompleteWidget({
       id: 'text',
       target: '#search',
-      fields: [ 'title', 'variable' ]
+      fields: [ 'text' ]
     }));
     Manager.init();
     Manager.store.addByValue('q', '*:*');
     var params = {
       facet: true,
-      'facet.field': [ 'title', 'variable' ],
+      'facet.field': [ 'title', 'source' ],
       'facet.limit': 20,
       'facet.mincount': 1,
       'f.topics.facet.limit': 50,

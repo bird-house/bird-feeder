@@ -25,10 +25,14 @@ class ThreddsParser(Parser):
         Parser.__init__(self)
         self.url = url
         self.depth = depth
+        self.cat = threddsclient.read_url(url)
 
     def parse(self, ds):
         metadata = dict(
+            source=self.cat.url,
             title=ds.name,
+            category='thredds',
+            subject=self.cat.name,
             content_type=ds.content_type,
             last_modified=ds.modified,
             resourcename=ds.ID,
@@ -113,7 +117,9 @@ class NetCDFParser(Parser):
         #logger.debug(metadata.keys())
         
         record = dict(
+            source = self.start_dir,
             title = metadata.get('name'),
+            category = "files",
             url = metadata.get('url'),
             variable = metadata.get('variable'),
             variable_long_name = metadata.get('variable_long_name'),
