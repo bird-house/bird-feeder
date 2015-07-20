@@ -19,8 +19,6 @@ define([
   'reuters/TagcloudWidget',
   'reuters/CurrentSearchWidget.9',
   'reuters/AutocompleteWidget',
-  'reuters/CountryCodeWidget',
-  'reuters/CalendarWidget',
   'widgets/jquery/PagerWidget'
 ], function () {
   $(function () {
@@ -57,16 +55,6 @@ define([
       id: 'text',
       target: '#search',
       fields: [ 'topics', 'organisations', 'exchanges' ]
-    }));
-    Manager.addWidget(new AjaxSolr.CountryCodeWidget({
-      id: 'countries',
-      target: '#countries',
-      field: 'countryCodes'
-    }));
-    Manager.addWidget(new AjaxSolr.CalendarWidget({
-      id: 'calendar',
-      target: '#calendar',
-      field: 'date'
     }));
     Manager.init();
     Manager.store.addByValue('q', '*:*');
