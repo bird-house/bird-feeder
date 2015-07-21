@@ -66,6 +66,8 @@ class NetCDFParser(Parser):
         metadata = {}
         metadata['name'] = os.path.basename(filepath)
         metadata['url'] = 'file://' + filepath
+        metadata['content_type'] = 'application/netcdf'
+        metadata['resourcename'] = filepath
 
         try:
             ds = Dataset(filepath, 'r')
@@ -121,20 +123,19 @@ class NetCDFParser(Parser):
             title = metadata.get('name'),
             category = "files",
             url = metadata.get('url'),
+            content_type = metadata.get('content_type'),
+            resourcename = metadata.get('resourcename'),
             variable = metadata.get('variable'),
             variable_long_name = metadata.get('variable_long_name'),
             cf_standard_name = metadata.get('cf_standard_name'),
             units = metadata.get('units'),
             comment = metadata.get('comments'),
-            institution = metadata.get('institution'),
-            institute_id = metadata.get('institute_id'),
-            experiment = metadata.get('experiment'),
-            experiment_id = metadata.get('experiment_id'),
-            project_id = metadata.get('project_id'),
-            model_id = metadata.get('model_id'),
+            institute = metadata.get('institute_id'),
+            experiment = metadata.get('experiment_id'),
+            project = metadata.get('project_id'),
+            model = metadata.get('model_id'),
             frequency = metadata.get('frequency'),
             creation_date = metadata.get('creation_date'),
-            history = metadata.get('history'),
             )
         return record
 
