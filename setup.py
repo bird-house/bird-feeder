@@ -3,7 +3,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-version = '0.1.0'
+version = '0.1.1'
 description = 'Bird Feeder publishes Thredds metadata catalogs to a Solr index service with birdhouse schema.'
 long_description = (
     open('README.rst').read() + '\n' +
@@ -36,7 +36,7 @@ setup(name='bird-feeder',
       classifiers=classifiers,
       keywords='thredds solr python netcdf birdhouse anaconda',
       author='Birdhouse Developers',
-      author_email='ehbrecht at dkrz.de',
+      author_email='',
       url='https://github.com/bird-house/bird-feeder',
       license = "Apache License v2.0",
       packages=find_packages(),
