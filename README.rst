@@ -5,7 +5,7 @@ Bird Feeder
 Bird Feeder (the bird)
     *Feed the Birds ...* 
 
-Bird Feeder is parsing Thredds catalogs and local directories with NetCDF files and publishes metadata with download URLs to a Solr index service with a birdhouse schema.
+Bird Feeder is parsing Thredds catalogs and local directories with ``NetCDF`` files and publishes metadata with download URLs to a Solr index service with a birdhouse schema.
 
 Install from Anaconda
 =====================
@@ -22,7 +22,7 @@ Install from GitHub
 .. code-block:: sh
 
    $ git clone https://github.com/bird-house/bird-feeder.git
-   $ cd malleefowl
+   $ cd bird-feeder
    $ make install
    
 Start Solr service on http://localhost:8983/solr/birdhouse:
@@ -67,7 +67,7 @@ Help:
        from-directory      Publish NetCDF files from directory to Solr.
 
 
-Parse a Thredds catalog (recursivly until depth level 2):
+Parse a Thredds catalog (recursively until depth level 2):
 
 .. code-block:: sh
 
