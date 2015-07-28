@@ -1,9 +1,10 @@
 language: python
 python:
   - "2.7"
+sudo: required
 install:
-  - make install
+  - make sysinstall
 script:
-  - bin/birdfeeder -h
+  - make install
 #after_success:
 # - coveralls
