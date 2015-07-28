@@ -12,7 +12,7 @@ Install from Anaconda
 
 .. code-block:: sh
 
-   $ conda install -c birdhouse birdfeeder
+   $ conda install -c birdhouse bird-feeder
 
 
 
