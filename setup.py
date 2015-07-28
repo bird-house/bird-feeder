@@ -29,7 +29,7 @@ classifiers=[
         'Topic :: Scientific/Engineering :: Atmospheric Science',
         ]
 
-setup(name='birdfeeder',
+setup(name='bird-feeder',
       version=version,
       description=description,
       long_description=long_description,
