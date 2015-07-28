@@ -12,12 +12,12 @@ def clear(service):
     solr.delete(q='*:*')
    
 
-def feed_from_thredds(service, catalog_url, depth, maxrecords, batch_size):    
+def feed_from_thredds(service, catalog_url, depth=1, maxrecords=-1, batch_size=50000):    
     logger.info("solr=%s, thredds catalog=%s", service, catalog_url)
     publish(service, parser=ThreddsParser(catalog_url, depth), maxrecords=maxrecords, batch_size=batch_size)
     
     
-def feed_from_directory(service, start_dir, maxrecords, batch_size):
+def feed_from_directory(service, start_dir, maxrecords=-1, batch_size=50000):
     logger.info("solr=%s, start dir=%s", service, start_dir)
     publish(service, parser=NetCDFParser(start_dir), maxrecords=maxrecords, batch_size=batch_size)
 
