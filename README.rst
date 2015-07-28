@@ -2,6 +2,9 @@
 Bird Feeder
 ***********
 
+.. image:: https://travis-ci.org/bird-house/bird-feeder.svg?branch=master
+   :alt: Travis Build
+
 Bird Feeder (the bird)
     *Feed the Birds ...* 
 
@@ -9,6 +12,15 @@ Bird Feeder is parsing Thredds catalogs and local directories with ``NetCDF`` fi
 
 Install from Anaconda
 =====================
+
+.. image:: https://anaconda.org/birdhouse/bird-feeder/badges/build.svg
+   :alt: Anaconda Build
+
+.. image:: https://anaconda.org/birdhouse/bird-feeder/badges/version.svg
+   :alt: Anaconda Version
+
+.. image:: https://anaconda.org/birdhouse/bird-feeder/badges/downloads.svg
+   :alt: Anaconda Downloads
 
 .. code-block:: sh
 
