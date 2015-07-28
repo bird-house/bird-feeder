@@ -4,7 +4,7 @@ from setuptools import find_packages
 from setuptools import setup
 
 version = '0.1.0'
-description = 'Bird Feeder provides input data for the Birds.'
+description = 'Bird Feeder publishes Thredds metadata catalogs to a Solr index service with birdhouse schema.'
 long_description = (
     open('README.rst').read() + '\n' +
     open('AUTHORS.rst').read() + '\n' +
