@@ -15,7 +15,7 @@ requires = [
     'argcomplete',
     'pysolr',
     'threddsclient',
-    'dateutil',
+    #'dateutil',
     'nose',
     ]
 
