@@ -62,6 +62,7 @@ class NetCDFParser(Parser):
 
             
     def parse(self, filepath):
+        filepath = os.path.abspath(filepath)
         logger.debug("parse %s", filepath)
         metadata = {}
         metadata['name'] = os.path.basename(filepath)
