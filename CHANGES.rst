@@ -1,10 +1,10 @@
 Change History
 **************
 
-0.2.0 (2015-09-xx)
+0.1.2 (2015-09-18)
 ==================
 
-* Fixed #3: convert relative path to abs path for feeding form directory.
+* Fixed #3: convert relative path to abs path for feeding from directory.
 
 0.1.1 (2015-07-28)
 ==================

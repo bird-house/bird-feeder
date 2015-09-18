@@ -3,7 +3,7 @@
 from setuptools import find_packages
 from setuptools import setup
 
-version = '0.1.1'
+version = '0.1.2'
 description = 'Bird Feeder publishes Thredds metadata catalogs to a Solr index service with birdhouse schema.'
 long_description = (
     open('README.rst').read() + '\n' +
