@@ -31,8 +31,13 @@ def crawl(page, depth=0):
         return
     
     print 'crawl page', page, depth
-    req = requests.get(page)
-    soup = BeautifulSoup(req.text)
+    response = requests.head(page)
+    if not 'text/html' in response.headers['content-type']:
+        return
+    response = requests.get(page)
+    if not response.ok:
+        return
+    soup = BeautifulSoup(response.text)
     #print(soup.prettify())
     links = soup.find_all('a')
     newpages = set()
@@ -46,13 +51,13 @@ def crawl(page, depth=0):
                 continue
             url=url.split('#')[0] # remove location portion
             #if url[0:4]=='http' and not self.is_in_url_list(url):
+            #if 'application/x-netcdf' in response.headers['content-type']:
             if url.endswith('.nc'):
                 add_file(url)
             else:
                 newpages.add(url)
             #print url
     print 'newpages', len(newpages)
-    print 'found files', len(found_files)
     for page in newpages:
         crawl(page, depth=depth-1)
 
