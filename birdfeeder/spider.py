@@ -26,7 +26,7 @@ def construct_url(url, href):
     return cat
 
 def write_files(files):
-    with open('names.csv', 'w') as csvfile:
+    with open('names.csv', 'a') as csvfile:
         fieldnames = ['filename', 'url']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
