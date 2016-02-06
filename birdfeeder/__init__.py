@@ -1,6 +1,6 @@
 import sys
 
-from .client import clear, feed_from_thredds, feed_from_directory
+from .client import spider, clear, feed_from_thredds, feed_from_directory
 
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARN)
@@ -46,6 +46,26 @@ def create_parser():
             help='Run "birdfeeder <command> -h" to get additional help.'
             )
 
+    # spider command
+    subparser = subparsers.add_parser(
+        'spider',
+        prog="birdfeeder spider",
+        help="Runs spider to crawl netcdf files on a HTTP file service."
+        )
+
+    subparser.add_argument("--url",
+                        dest='url',
+                        required=True,
+                        type=type(''),
+                        help="HTTP file service URL",
+                        action="store")
+    subparser.add_argument("--depth",
+                        dest='depth',
+                        required=False,
+                        type=type(0),
+                        help="Depth level for crawler",
+                        action="store")
+     
     # clear command
     subparser = subparsers.add_parser(
         'clear',
@@ -93,7 +113,9 @@ def create_parser():
 def execute(args):
     if args.debug:
         logger.setLevel(logging.DEBUG)
-    if args.command == 'clear':
+    if args.command == 'spider':
+        spider(url=args.url, depth=args.depth)
+    elif args.command == 'clear':
         clear(service=args.service)
     elif args.command == 'from-thredds':
         feed_from_thredds(service=args.service, catalog_url=args.catalog_url, depth=args.depth,

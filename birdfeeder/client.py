@@ -5,6 +5,8 @@ from . parser import ThreddsParser, NetCDFParser
 import logging
 logger = logging.getLogger(__name__)
 
+def spider():
+    pass
 
 def clear(service):
     solr = pysolr.Solr(service, timeout=10)
