@@ -3,11 +3,10 @@ import os
 import urlparse
 from bs4 import BeautifulSoup 
 import requests
+import csv
 
 import logging
 logger = logging.getLogger(__name__)
-
-found_files = set()
 
 def construct_url(url, href):
     u = urlparse.urlsplit(url.strip('/'))
@@ -26,8 +25,16 @@ def construct_url(url, href):
     logger.debug(cat)
     return cat
 
-def add_file(url):
-    found_files.add(url)
+def write_files(files):
+    with open('names.csv', 'w') as csvfile:
+        fieldnames = ['filename', 'url']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        #writer.writeheader()
+        for url in files:
+            u = urlparse.urlsplit(url)
+            filename = os.path.basename(u.path)
+            writer.writerow({'filename': filename, 'url': url})
 
 def crawl(page, depth=0):
     if depth < 0:
@@ -44,6 +51,7 @@ def crawl(page, depth=0):
     #print(soup.prettify())
     links = soup.find_all('a')
     newpages = set()
+    newfiles = set()
     for link in links:
         if ('href' in dict(link.attrs)):
             if link.text.strip().lower() in ['name', 'last modified', 'size', 'description', 'parent directory']:
@@ -56,21 +64,10 @@ def crawl(page, depth=0):
             #if url[0:4]=='http' and not self.is_in_url_list(url):
             #if 'application/x-netcdf' in response.headers['content-type']:
             if url.endswith('.nc'):
-                add_file(url)
+                newfiles.add(url)
             else:
                 newpages.add(url)
-            #print url
+    write_files(newfiles)
     logger.debug('newpages %d', len(newpages))
     for page in newpages:
         crawl(page, depth=depth-1)
-
-
-def main():
-    page = "http://ensemblesrt3.dmi.dk/data/CORDEX/AFR-44/KNMI/MOHC-HadGEM2-ES/rcp45/r1i1p1/KNMI-RACMO22T/v1/mon"
-    crawl(page=page, depth=3)
-
-    for url in found_files:
-        print url
-            
-if __name__ == '__main__':
-    sys.exit(main())
