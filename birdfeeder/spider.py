@@ -4,6 +4,9 @@ import urlparse
 from bs4 import BeautifulSoup 
 import requests
 
+import logging
+logger = logging.getLogger(__name__)
+
 found_files = set()
 
 def construct_url(url, href):
@@ -20,7 +23,7 @@ def construct_url(url, href):
     else:
         # Relative paths.
         cat = relative_path + "/" + href
-    print cat
+    logger.debug(cat)
     return cat
 
 def add_file(url):
@@ -30,7 +33,7 @@ def crawl(page, depth=0):
     if depth < 0:
         return
     
-    print 'crawl page', page, depth
+    logger.debug('crawl page %s %d', page, depth)
     response = requests.head(page)
     if not 'text/html' in response.headers['content-type']:
         return
@@ -57,7 +60,7 @@ def crawl(page, depth=0):
             else:
                 newpages.add(url)
             #print url
-    print 'newpages', len(newpages)
+    logger.debug('newpages %d', len(newpages))
     for page in newpages:
         crawl(page, depth=depth-1)
 
@@ -66,7 +69,6 @@ def main():
     page = "http://ensemblesrt3.dmi.dk/data/CORDEX/AFR-44/KNMI/MOHC-HadGEM2-ES/rcp45/r1i1p1/KNMI-RACMO22T/v1/mon"
     crawl(page=page, depth=3)
 
-    print "result"
     for url in found_files:
         print url
             
