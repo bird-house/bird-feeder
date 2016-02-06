@@ -2,13 +2,13 @@ import pysolr
 import threddsclient
 
 from birdfeeder.parser import ThreddsParser, NetCDFParser
-from birdfeeder import spider as web_spider
+from birdfeeder import spider
 
 import logging
 logger = logging.getLogger(__name__)
 
-def spider(url, depth=0):
-    web_spider.crawl(page=url, depth=depth)
+def webspider(url, depth=0):
+    spider.crawl(page=url, depth=depth)
 
 def clear(service):
     solr = pysolr.Solr(service, timeout=10)

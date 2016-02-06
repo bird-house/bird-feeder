@@ -1,6 +1,6 @@
 import sys
 
-from birdfeeder.client import spider, clear, feed_from_thredds, feed_from_directory
+from birdfeeder.client import webspider, clear, feed_from_thredds, feed_from_directory
 
 import logging
 logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARN)
@@ -114,7 +114,7 @@ def execute(args):
     if args.debug:
         logger.setLevel(logging.DEBUG)
     if args.command == 'spider':
-        spider(url=args.url, depth=args.depth)
+        webspider(url=args.url, depth=args.depth)
     elif args.command == 'clear':
         clear(service=args.service)
     elif args.command == 'from-thredds':
