@@ -22,41 +22,45 @@ def construct_url(url, href):
     else:
         # Relative paths.
         cat = relative_path + "/" + href
-    logger.debug(cat)
+    #logger.debug(cat)
     return cat
 
-def write_files(files):
-    with open('names.csv', 'a') as csvfile:
-        fieldnames = ['filename', 'url']
+def write_datasets(page, depth=0, filename='out.csv'):
+    with open(filename, 'w') as csvfile:
+        fieldnames = ['name', 'url']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-        #writer.writeheader()
-        for url in files:
-            u = urlparse.urlsplit(url)
-            filename = os.path.basename(u.path)
-            writer.writerow({'filename': filename, 'url': url})
+        writer.writeheader()
+        for ds in crawl(page, depth):
+            writer.writerow({'name': ds.name, 'url': ds.url})
+
+class Dataset(object):
+    """
+    Abstract dataset class
+    """
+    def __init__(self, url):
+        self.url = url
+
+        u = urlparse.urlsplit(url)
+        self.name = os.path.basename(u.path)
 
 def crawl(page, depth=0):
-    if depth < 0:
-        return
-    
     logger.debug('crawl page %s %d', page, depth)
     response = requests.head(page)
-    if not 'text/html' in response.headers['content-type']:
-        return
+    if not 'html' in response.headers['content-type']:
+        raise Exception('Crawler accepts only HTML pages, got {0}'.format(response.headers['content-type']))
     response = requests.get(page)
     if not response.ok:
-        return
+        raise Exception('Failed to access page {0}'.format(page))
     soup = BeautifulSoup(response.text)
     #print(soup.prettify())
     links = soup.find_all('a')
     newpages = set()
-    newfiles = set()
+    datasets = []
     for link in links:
         if ('href' in dict(link.attrs)):
             if link.text.strip().lower() in ['name', 'last modified', 'size', 'description', 'parent directory']:
                 continue
-
             url = construct_url(page, link.attrs['href'])
             if url.find("'")!=-1:
                 continue
@@ -64,10 +68,12 @@ def crawl(page, depth=0):
             #if url[0:4]=='http' and not self.is_in_url_list(url):
             #if 'application/x-netcdf' in response.headers['content-type']:
             if url.endswith('.nc'):
-                newfiles.add(url)
+                datasets.append(Dataset(url))
             else:
                 newpages.add(url)
-    write_files(newfiles)
-    logger.debug('newpages %d', len(newpages))
-    for page in newpages:
-        crawl(page, depth=depth-1)
+    for ds in datasets:
+        yield ds
+    if depth > 0:
+        for page in newpages:
+            for ds in crawl(page, depth=depth-1):
+                yield ds
