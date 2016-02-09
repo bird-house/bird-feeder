@@ -115,7 +115,7 @@ def execute(args):
     if args.debug:
         logger.setLevel(logging.DEBUG)
     if args.command == 'spider':
-        dump_from_spider(page=args.url, depth=args.depth)
+        dump_from_spider(url=args.url, depth=args.depth)
     elif args.command == 'clear':
         clear(service=args.service)
     elif args.command == 'from-thredds':
