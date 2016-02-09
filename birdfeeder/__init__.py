@@ -64,8 +64,8 @@ def create_parser():
                         dest='depth',
                         required=False,
                         type=type(0),
-                        default=0,
-                        help="Depth level for crawler. Default: 0",
+                        default=100,
+                        help="Depth level for crawler. Default: 100",
                         action="store")
     subparser.add_argument("-o",
                         dest='output',

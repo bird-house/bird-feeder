@@ -41,7 +41,7 @@ def write_datasets(url, depth=0, filename='out.csv'):
                              'name': ds.name,
                              'last_modified': ds.last_modified,
                              'size': ds.size})
-            if ds_counter > 0 and ds_counter % 5000 == 0:
+            if ds_counter > 0 and ds_counter % 1000 == 0:
                 logger.info('{0} datasets written ...'.format(ds_counter))
             ds_counter += 1
     logger.info('{0} datasets written to {1}'.format(ds_counter, filename))
@@ -115,8 +115,8 @@ def crawl(url, depth=0):
     logger.debug('crawling page %s. depth=%d', url, depth)
     try:
         page = read_url(url)
-    except InvalidPage:
-        logger.exception("Skipped invalid page {0}".format(url))
+    except InvalidPage as err:
+        logger.error("Skipped invalid page %s: %s", url, err)
     else:
         for ds in page.datasets:
             yield ds
