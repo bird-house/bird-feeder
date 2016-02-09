@@ -1,8 +1,21 @@
 import nose
 from nose.tools import ok_
+from nose.tools import raises
 from nose.plugins.attrib import attr
 
 from birdfeeder import spider
+
+@attr('online')
+@raises(spider.InvalidPage)
+def test_invalid_page():
+    page = "http://ensemblesrt3.dmi.dk/data/CORDEX/AFR-44/KNMI/ICHEC-EC-EARTH/rcp45/r1i1p1/KNMI-RACMO22T/v1/day/snc/Daily_snc_CC.ascii"
+    spider.read_url(page)
+
+@attr('online')
+@raises(spider.InvalidPage)
+def test_no_html():
+    page = "http://ensemblesrt3.dmi.dk/data/CORDEX/AFR-44/KNMI/MOHC-HadGEM2-ES/rcp45/r1i1p1/KNMI-RACMO22T/v1/mon/tasmax/v20150224/tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc"
+    spider.read_url(page)
 
 @attr('online')
 def test_crawl_dmi_1():
@@ -67,24 +80,13 @@ def test_read_xml_dmi_2():
   <body>
     <h1>Index of /data/CORDEX/AFR-44/KNMI/MOHC-HadGEM2-ES/rcp45/r1i1p1/KNMI-RACMO22T/v1/mon/tasmax/v20150224</h1>
     <pre>
-      <img src="/icons/blank.gif" alt="Icon "> 
-      <a href="?C=N;O=D">Name</a>                                                                               
-      <a href="?C=M;O=A">Last modified</a>      
-      <a href="?C=S;O=A">Size</a>  
-      <a href="?C=D;O=A">Description</a>
+      <img src="/icons/blank.gif" alt="Icon "> <a href="?C=N;O=D">Name</a> <a href="?C=M;O=A">Last modified</a> <a href="?C=S;O=A">Size</a> <a href="?C=D;O=A">Description</a>
       <hr>
       <img src="/icons/back.gif" alt="[PARENTDIR]"> 
       <a href="/data/CORDEX/AFR-44/KNMI/MOHC-HadGEM2-ES/rcp45/r1i1p1/KNMI-RACMO22T/v1/mon/tasmax/">Parent Directory</a> 
       -  
-      <img src="/icons/unknown.gif" alt="[   ]"> 
-      <a href="tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc">tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc</a>   
-      2015-02-12 14:37  5.0M  
-      <img src="/icons/unknown.gif" alt="[   ]"> 
-      <a href="tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_201101-202012.nc">tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_201101-202012.nc</a>   
-      2015-02-12 14:37  9.9M  
-      <img src="/icons/unknown.gif" alt="[   ]"> 
-      <a href="tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_202101-203012.nc">tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_202101-203012.nc</a>   
-      2015-02-12 14:37  9.9M  
+      <img src="/icons/unknown.gif" alt="[   ]"> <a href="tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc">tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc</a> 2015-02-12 14:37  5.0M  
+      <img src="/icons/unknown.gif" alt="[   ]"> <a href="tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_201101-202012.nc">tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_201101-202012.nc</a> 2015-02-12 14:37  9.9M
       <hr>
     </pre>
     <address>Apache/2.4.7 (Ubuntu) Server at ensemblesrt3.dmi.dk Port 80</address>
@@ -93,9 +95,12 @@ def test_read_xml_dmi_2():
     """
     page_url = "http://nowhere.org/cordex/"
     page = spider.read_xml(xml, baseurl=page_url)
-    assert len(page.datasets) == 3
+    assert len(page.datasets) == 2
     assert len(page.references) == 0
     for ds in page.datasets:
         assert ds.url.startswith(page_url)
         assert 'tasmax' in ds.url
+    assert page.datasets[0].name == "tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc"
+    assert page.datasets[0].last_modified == "2015-02-12T14:37"
+    assert page.datasets[0].size == "5.0M"
 

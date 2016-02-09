@@ -7,8 +7,8 @@ from birdfeeder import spider
 import logging
 logger = logging.getLogger(__name__)
 
-def dump_from_spider(url, depth=0):
-    spider.write_datasets(url, depth=depth)
+def dump_from_spider(url, depth=0, filename='out.csv'):
+    spider.write_datasets(url, depth=depth, filename=filename)
 
 def clear(service):
     solr = pysolr.Solr(service, timeout=10)

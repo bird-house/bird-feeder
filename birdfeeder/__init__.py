@@ -3,7 +3,7 @@ import sys
 from birdfeeder.client import dump_from_spider, clear, feed_from_thredds, feed_from_directory
 
 import logging
-logging.basicConfig(format='%(levelname)s:%(message)s', level=logging.WARN)
+logging.basicConfig(format='%(message)s', level=logging.WARN)
 logger = logging.getLogger(__name__)
 
 
@@ -15,8 +15,9 @@ def create_parser():
         usage='''birdfeeder [<options>] <command> [<args>]''',
         description="Feeds Solr with Datasets (NetCDF Format) from Thredds Catalogs and File System.",
         )
-    parser.add_argument("--debug",
-                        help="enable debug mode",
+    parser.add_argument("-v",
+                        dest="verbose",
+                        help="enable verbose mode",
                         action="store_true")
     parser.add_argument("--service",
                         dest='service',
@@ -66,6 +67,13 @@ def create_parser():
                         default=0,
                         help="Depth level for crawler. Default: 0",
                         action="store")
+    subparser.add_argument("-o",
+                        dest='output',
+                        required=False,
+                        type=type(''),
+                        default='out.csv',
+                        help="Filename of the output CSV file. Default: out.csv",
+                        action="store")
      
     # clear command
     subparser = subparsers.add_parser(
@@ -112,10 +120,10 @@ def create_parser():
 
 
 def execute(args):
-    if args.debug:
+    if args.verbose:
         logger.setLevel(logging.DEBUG)
     if args.command == 'spider':
-        dump_from_spider(url=args.url, depth=args.depth)
+        dump_from_spider(url=args.url, depth=args.depth, filename=args.output)
     elif args.command == 'clear':
         clear(service=args.service)
     elif args.command == 'from-thredds':
@@ -125,7 +133,7 @@ def execute(args):
         feed_from_directory(service=args.service, start_dir=args.start_dir,
                             maxrecords=args.maxrecords,
                             batch_size=args.batch_size)
-    logger.info('done.')
+    logger.info('Done.')
 
 def main():
     import argcomplete
