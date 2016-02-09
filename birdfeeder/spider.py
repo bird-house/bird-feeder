@@ -28,22 +28,28 @@ def construct_url(url, href):
     #logger.debug(cat)
     return cat
 
-def write_datasets(url, depth=0, filename='out.csv'):
-    logger.info('Starting crawler ...')
+def write_datasets(url, depth=0, filename='out.csv', batch_size=1000):
+    logger.info('Starting to crawl %s ...', url)
     with open(filename, 'w') as csvfile:
         fieldnames = ['url', 'name', 'last_modified', 'size']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
         writer.writeheader()
         ds_counter = 0
+        records = []
         for ds in crawl(url, depth):
-            writer.writerow({'url': ds.url,
+            records.append({'url': ds.url,
                              'name': ds.name,
                              'last_modified': ds.last_modified,
                              'size': ds.size})
-            if ds_counter > 0 and ds_counter % 1000 == 0:
+            if len(records) > batch_size:
+                writer.writerows(records)
                 logger.info('{0} datasets written ...'.format(ds_counter))
+                records = [] # reset records
             ds_counter += 1
+        # write last records
+        if len(records) > 0:
+            writer.writerows(records)
     logger.info('{0} datasets written to {1}'.format(ds_counter, filename))
 
 class Dataset(object):
