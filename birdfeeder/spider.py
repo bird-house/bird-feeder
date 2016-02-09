@@ -52,7 +52,7 @@ class Page(object):
 
     def _parse_page(self):
         links = self.soup.find_all('a')
-        self.references = set()
+        newpages = set()
         self.datasets = []
         for link in links:
             if ('href' in dict(link.attrs)):
@@ -67,7 +67,8 @@ class Page(object):
                 if url.endswith('.nc'):
                     self.datasets.append(Dataset(url))
                 else:
-                    self.references.add(url)
+                    newpages.add(url)
+        self.references = list(newpages)
 
 def read_url(url):
     response = requests.head(url)
