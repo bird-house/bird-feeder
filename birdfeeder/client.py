@@ -31,7 +31,7 @@ def feed_from_thredds(service, catalog_url, depth=1, maxrecords=-1, batch_size=5
     publish(service, parser=ThreddsParser(catalog_url, depth), maxrecords=maxrecords, batch_size=batch_size)
     
     
-def feed_from_directory(service, start_dir, maxrecords=-1, batch_size=50000):
+def feed_from_walker(service, start_dir, maxrecords=-1, batch_size=50000):
     logger.info("solr=%s, start dir=%s", service, start_dir)
     publish(service, parser=WalkerParser(start_dir), maxrecords=maxrecords, batch_size=batch_size)
 

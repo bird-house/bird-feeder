@@ -1,6 +1,6 @@
 import sys
 
-from birdfeeder.client import write_spider, write_walker, clear, feed_from_thredds, feed_from_directory, feed_from_spider
+from birdfeeder.client import write_spider, write_walker, clear, feed_from_thredds, feed_from_walker, feed_from_spider
 
 import logging
 logging.basicConfig(format='%(message)s', level=logging.WARN)
@@ -51,7 +51,7 @@ def create_parser():
     subparser = subparsers.add_parser(
         'spider',
         prog="birdfeeder spider",
-        help="Runs spider to crawl NetCDF files on a HTTP file service and writes the URL list to a CSV file."
+        help="Runs spider to crawl NetCDF files on a HTTP file service and writes the path list to a CSV file."
         )
 
     subparser.add_argument("--url",
@@ -66,6 +66,27 @@ def create_parser():
                         type=type(0),
                         default=100,
                         help="Depth level for crawler. Default: 100",
+                        action="store")
+    subparser.add_argument("-o",
+                        dest='output',
+                        required=False,
+                        type=type(''),
+                        default='out.csv',
+                        help="Filename of the output CSV file. Default: out.csv",
+                        action="store")
+
+    # walker command
+    subparser = subparsers.add_parser(
+        'walker',
+        prog="birdfeeder walker",
+        help="Runs walker to crawl NetCDF files from filesystem and writes the path list to a CSV file."
+        )
+
+    subparser.add_argument("--start-dir",
+                        dest='start_dir',
+                        required=True,
+                        type=type(''),
+                        help="Start directory",
                         action="store")
     subparser.add_argument("-o",
                         dest='output',
@@ -103,10 +124,10 @@ def create_parser():
                         help="Depth level for Thredds catalog crawler. Default: 1",
                         action="store")
 
-    # from-directory command
+    # from-walker command
     subparser = subparsers.add_parser(
-        'from-directory',
-        prog="birdfeeder from-directory",
+        'from-walker',
+        prog="birdfeeder from-walker",
         help="Publish NetCDF files from directory to Solr."
         )
 
@@ -145,14 +166,16 @@ def execute(args):
     if args.verbose:
         logger.setLevel(logging.DEBUG)
     if args.command == 'spider':
-        run_spider(url=args.url, depth=args.depth, filename=args.output)
+        write_spider(url=args.url, depth=args.depth, filename=args.output)
+    if args.command == 'walker':
+        write_walker(start_dir=args.start_dir, filename=args.output)
     elif args.command == 'clear':
         clear(service=args.service)
     elif args.command == 'from-thredds':
         feed_from_thredds(service=args.service, catalog_url=args.catalog_url, depth=args.depth,
                           maxrecords=args.maxrecords, batch_size=args.batch_size)
-    elif args.command == 'from-directory':
-        feed_from_directory(service=args.service, start_dir=args.start_dir,
+    elif args.command == 'from-walker':
+        feed_from_walker(service=args.service, start_dir=args.start_dir,
                             maxrecords=args.maxrecords,
                             batch_size=args.batch_size)
     elif args.command == 'from-spider':
