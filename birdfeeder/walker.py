@@ -15,8 +15,8 @@ SPATIAL_VARIABLES =  [
 
 
 class Dataset(object):
-    def __init__(self, filepath):
-        self.path = filepath
+    def __init__(self, filepath, basedir='/'):
+        self.path = os.path.sep + os.path.relpath(filepath, basedir) 
         self.name = os.path.basename(filepath)
         self.url = 'file://' + filepath
         self.content_type = 'application/netcdf'
@@ -151,7 +151,7 @@ def crawl(start_dir):
             # only parse .nc files
             if filename.endswith('.nc'):
                 filepath = os.path.join(directory, filename)
-                yield Dataset(filepath)
+                yield Dataset(filepath, basedir=start_dir)
 
 
         
