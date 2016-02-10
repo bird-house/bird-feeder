@@ -22,7 +22,7 @@ class Parser(object):
 
 
 class ThreddsParser(Parser):
-    def __init__(self, url, depth):
+    def __init__(self, url, depth=0):
         Parser.__init__(self)
         self.url = url
         self.depth = depth

@@ -99,7 +99,8 @@ def create_parser():
                         dest='depth',
                         required=False,
                         type=type(0),
-                        help="Depth level for Thredds catalog crawler",
+                        default=1,
+                        help="Depth level for Thredds catalog crawler. Default: 1",
                         action="store")
 
     # from-directory command

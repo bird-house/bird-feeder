@@ -8,6 +8,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 def run_spider(url, depth=0, filename='out.csv'):
+    logger.info('Starting spider %s, depth=%s ...', url, depth)
     spider.write_datasets(url, depth=depth, filename=filename)
 
     

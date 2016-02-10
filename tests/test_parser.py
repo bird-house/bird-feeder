@@ -2,7 +2,10 @@ import nose
 from nose.tools import ok_
 from nose.plugins.attrib import attr
 
-from birdfeeder.parser import NetCDFParser, SpiderParser
+from birdfeeder.parser import ThreddsParser, NetCDFParser, SpiderParser
+
+def test_thredds_parser():
+    parser = ThreddsParser(catalog_url="http://nowhere.org/catalog.xml", depth=1)
 
 def test_netcdf_parser():
     parser = NetCDFParser(start_dir='.')

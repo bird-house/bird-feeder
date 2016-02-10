@@ -4,6 +4,8 @@ import urlparse
 from bs4 import BeautifulSoup 
 import requests
 import csv
+from timeit import default_timer as timer
+from datetime import timedelta
 
 import logging
 logger = logging.getLogger(__name__)
@@ -29,28 +31,33 @@ def construct_url(url, href):
     return cat
 
 def write_datasets(url, depth=0, filename='out.csv', batch_size=1000):
-    logger.info('Starting to crawl %s ...', url)
+    start = timer()
     with open(filename, 'w') as csvfile:
-        fieldnames = ['url', 'name', 'last_modified', 'size']
+        fieldnames = ['path', 'name', 'last_modified', 'size']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-        #writer.writeheader()
+        writer.writeheader()
+        
         ds_counter = 0
         records = []
         for ds in crawl(url, depth):
-            records.append({'url': ds.url,
+            records.append({'path': ds.path,
                              'name': ds.name,
                              'last_modified': ds.last_modified,
                              'size': ds.size})
             if len(records) > batch_size:
                 writer.writerows(records)
-                logger.info('{0} datasets written ...'.format(ds_counter))
+                end = timer()
+                elapsed_time = timedelta(seconds=int(end-start))
+                logger.info('{0} datasets written, elapsed time = {1} ...'.format(ds_counter, elapsed_time))
                 records = [] # reset records
             ds_counter += 1
         # write last records
         if len(records) > 0:
             writer.writerows(records)
-    logger.info('{0} datasets written to {1}'.format(ds_counter, filename))
+    end = timer()
+    elapsed_time = timedelta(seconds=int(end-start))
+    logger.info('{0} datasets written to {1}. Total elapsed time = {2}.'.format(ds_counter, filename, elapsed_time))
 
 
 class Dataset(object):
@@ -75,6 +82,11 @@ class Dataset(object):
     @property
     def download_url(self):
         return self.url
+
+    @property
+    def path(self):
+        u = urlparse.urlsplit(self.url.strip('/'))
+        return u.path
 
 
 class Page(object):
