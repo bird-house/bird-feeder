@@ -46,6 +46,8 @@ def publish(service, parser, maxrecords=-1, batch_size=50000):
 
     records = []
     for metadata in parser.crawl():
+        # TODO: size is currently not part of schema
+        if 'size' in metadata: del metadata['size']
         records.append(metadata)
         if len(records) >= batch_size:
             # publish if batch size is reached
