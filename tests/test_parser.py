@@ -4,6 +4,8 @@ from nose.plugins.attrib import attr
 
 from birdfeeder.parser import ThreddsParser, WalkerParser, SpiderParser
 
+from tests.common import TESTDATA_PATH
+
 @attr('online')
 def test_thredds_parser():
     parser = ThreddsParser(url="http://www.esrl.noaa.gov/psd/thredds/catalog/Datasets/ncep.reanalysis2/surface/catalog.xml", depth=1)
@@ -19,7 +21,16 @@ def test_thredds_parser():
     assert datasets[0]['title'] == "hgt.sfc.nc"
 
 def test_walker_parser():
-    parser = WalkerParser(start_dir='.')
+    parser = WalkerParser(start_dir=TESTDATA_PATH)
+    datasets = [ds for ds in parser.crawl()]
+    assert len(datasets) == 1
+
+    print datasets[0]
+    
+    assert datasets[0]['content_type'] == 'application/netcdf'
+    assert 'tasmax' in datasets[0]['url']
+    assert datasets[0]['last_modified'] == "2015-05-06T13:22:33Z"
+    assert datasets[0]['title'] == "tasmax_EUR-44_MPI-M-MPI-ESM-LR_rcp45_r1i1p1_MPI-CSC-REMO2009_v1_mon_200602-200612.nc"
     
 @attr('online')
 def test_spider_parser():

@@ -93,6 +93,7 @@ class WalkerParser(Parser):
             model = dataset.model,
             frequency = dataset.frequency,
             creation_date = dataset.creation_date,
+            last_modified=dataset.last_modified,
             )
         return metadata
 

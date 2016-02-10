@@ -41,7 +41,7 @@ class Dataset(object):
 
     @property
     def units(self):
-        return self.attibutes.get('units')
+        return self.attributes.get('units')
 
     @property
     def comments(self):
@@ -57,7 +57,7 @@ class Dataset(object):
 
     @property
     def project(self):
-        return self.attibutes.get('project_id')
+        return self.attributes.get('project_id')
 
     @property
     def model(self):
