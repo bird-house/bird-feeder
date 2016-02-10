@@ -34,7 +34,7 @@ def write_datasets(url, depth=0, filename='out.csv', batch_size=1000):
         fieldnames = ['url', 'name', 'last_modified', 'size']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-        writer.writeheader()
+        #writer.writeheader()
         ds_counter = 0
         records = []
         for ds in crawl(url, depth):
@@ -72,6 +72,11 @@ class Page(object):
     def _parse_page(self):
         links = self.soup.find_all('a')
         strlist = [s for s in self.soup.stripped_strings]
+        index_lookup = {}
+        for idx, val in enumerate(strlist):
+            if val.endswith('.nc'):
+               index_lookup[val] = idx
+            
         newpages = set()
         self.datasets = []
         for link in links:
@@ -85,16 +90,16 @@ class Page(object):
                 #if url[0:4]=='http' and not self.is_in_url_list(url):
                 #if 'application/x-netcdf' in response.headers['content-type']:
                 if url.endswith('.nc'):
-                    # TODO: ugly parsing ...
+                    # TODO: ugly parsing of last_modified and size
                     try:
                         name = link.text.strip()
-                        index = strlist.index(name)
+                        index = index_lookup.get(name)
                         attr = strlist[index+1].split()
                         last_modified = "{0}T{1}".format(attr[0], attr[1])
                         size = attr[2]
                         self.datasets.append(Dataset(url, name, last_modified, size))
                     except:
-                        msg = "Could not parse dataset: {url}".format(url)
+                        msg = "Could not parse dataset: {0}".format(url)
                         logger.exception(msg)
                         raise Exception(msg)
                 else:
@@ -102,14 +107,13 @@ class Page(object):
         self.references = list(newpages)
 
 def read_url(url):
-    response = requests.head(url)
+    response = requests.get(url)
+    if not response.ok:
+        raise Exception('Failed to access page {0}'.format(url))
     if not 'content-type' in response.headers:
         raise InvalidPage('No content-type found in response header.')
     if not 'html' in response.headers['content-type']:
         raise InvalidPage('Crawler accepts only HTML pages, got {0}'.format(response.headers['content-type']))
-    response = requests.get(url)
-    if not response.ok:
-        raise Exception('Failed to access page {0}'.format(url))
     return read_xml(response.text, url)
 
 def read_xml(xml, baseurl):
