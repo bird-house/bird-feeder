@@ -59,7 +59,7 @@ class SpiderParser(Parser):
             content_type=ds.content_type,
             last_modified=ds.last_modified,
             resourcename=ds.ID,
-            url=ds.download_url())
+            url=ds.download_url )
         return metadata
     
     def crawl(self):
