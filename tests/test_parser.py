@@ -2,13 +2,14 @@ import nose
 from nose.tools import ok_
 from nose.plugins.attrib import attr
 
-from birdfeeder.parser import ThreddsParser, NetCDFParser, SpiderParser
+from birdfeeder.parser import ThreddsParser, WalkerParser, SpiderParser
 
+@attr('online')
 def test_thredds_parser():
-    parser = ThreddsParser(catalog_url="http://nowhere.org/catalog.xml", depth=1)
+    parser = ThreddsParser(url="http://www.esrl.noaa.gov/psd/thredds/catalog.xml", depth=1)
 
-def test_netcdf_parser():
-    parser = NetCDFParser(start_dir='.')
+def test_walker_parser():
+    parser = WalkerParser(start_dir='.')
     
 #@attr('online')
 def test_spider_parser():

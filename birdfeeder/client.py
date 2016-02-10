@@ -1,15 +1,22 @@
 import pysolr
 import threddsclient
 
-from birdfeeder.parser import ThreddsParser, NetCDFParser, SpiderParser
+from birdfeeder.parser import ThreddsParser, WalkerParser, SpiderParser
 from birdfeeder import spider
+from birdfeeder import walker
 
 import logging
 logger = logging.getLogger(__name__)
 
+
 def run_spider(url, depth=0, filename='out.csv'):
     logger.info('Starting spider %s, depth=%s ...', url, depth)
     spider.write_datasets(url, depth=depth, filename=filename)
+
+    
+def run_walker(start_dir, filename='out.csv'):
+    logger.info('Starting walker %s ...', start_dir)
+    #walker.write_datasets(url, depth=depth, filename=filename)
 
     
 def clear(service):
@@ -25,7 +32,7 @@ def feed_from_thredds(service, catalog_url, depth=1, maxrecords=-1, batch_size=5
     
 def feed_from_directory(service, start_dir, maxrecords=-1, batch_size=50000):
     logger.info("solr=%s, start dir=%s", service, start_dir)
-    publish(service, parser=NetCDFParser(start_dir), maxrecords=maxrecords, batch_size=batch_size)
+    publish(service, parser=WalkerParser(start_dir), maxrecords=maxrecords, batch_size=batch_size)
 
 
 def feed_from_spider(service, url, depth=1, maxrecords=-1, batch_size=50000):    
