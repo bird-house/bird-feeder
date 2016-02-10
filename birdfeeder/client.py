@@ -1,15 +1,16 @@
 import pysolr
 import threddsclient
 
-from birdfeeder.parser import ThreddsParser, NetCDFParser
+from birdfeeder.parser import ThreddsParser, NetCDFParser, SpiderParser
 from birdfeeder import spider
 
 import logging
 logger = logging.getLogger(__name__)
 
-def dump_from_spider(url, depth=0, filename='out.csv'):
+def run_spider(url, depth=0, filename='out.csv'):
     spider.write_datasets(url, depth=depth, filename=filename)
 
+    
 def clear(service):
     solr = pysolr.Solr(service, timeout=10)
     logger.info("deletes all datasets from solr %s", service)
@@ -26,6 +27,11 @@ def feed_from_directory(service, start_dir, maxrecords=-1, batch_size=50000):
     publish(service, parser=NetCDFParser(start_dir), maxrecords=maxrecords, batch_size=batch_size)
 
 
+def feed_from_spider(service, url, depth=1, maxrecords=-1, batch_size=50000):    
+    logger.info("solr=%s, file service=%s", service, url)
+    publish(service, parser=SpiderParser(url, depth), maxrecords=maxrecords, batch_size=batch_size)
+
+    
 def publish(service, parser, maxrecords=-1, batch_size=50000):    
     solr = pysolr.Solr(service, timeout=10)
 

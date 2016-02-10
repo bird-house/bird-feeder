@@ -52,16 +52,30 @@ def write_datasets(url, depth=0, filename='out.csv', batch_size=1000):
             writer.writerows(records)
     logger.info('{0} datasets written to {1}'.format(ds_counter, filename))
 
+
 class Dataset(object):
     def __init__(self, url, name=None, last_modified=None, size=None):
         self.url = url
-        self.name = name
+        self._name = name
+        self.content_type = "application/netcdf"
         self.last_modified = last_modified
         self.size = size
 
-        if name is None:
-            u = urlparse.urlsplit(url)
-            self.name = os.path.basename(u.path)
+    @property
+    def ID(self):
+        return self.name
+
+    @property
+    def name(self):
+        if self._name is None:
+            u = urlparse.urlsplit(self.url)
+            self._name = os.path.basename(u.path)
+        return self._name
+
+    @property
+    def download_url(self):
+        return self.url
+
 
 class Page(object):
     def __init__(self, soup, url):
@@ -107,13 +121,14 @@ class Page(object):
         self.references = list(newpages)
 
 def read_url(url):
-    response = requests.get(url)
-    if not response.ok:
-        raise Exception('Failed to access page {0}'.format(url))
+    response = requests.head(url)
     if not 'content-type' in response.headers:
         raise InvalidPage('No content-type found in response header.')
     if not 'html' in response.headers['content-type']:
         raise InvalidPage('Crawler accepts only HTML pages, got {0}'.format(response.headers['content-type']))
+    response = requests.get(url)
+    if not response.ok:
+        raise Exception('Failed to access page {0}'.format(url))
     return read_xml(response.text, url)
 
 def read_xml(xml, baseurl):

@@ -1,6 +1,6 @@
 import sys
 
-from birdfeeder.client import dump_from_spider, clear, feed_from_thredds, feed_from_directory
+from birdfeeder.client import run_spider, clear, feed_from_thredds, feed_from_directory, feed_from_spider
 
 import logging
 logging.basicConfig(format='%(message)s', level=logging.WARN)
@@ -51,7 +51,7 @@ def create_parser():
     subparser = subparsers.add_parser(
         'spider',
         prog="birdfeeder spider",
-        help="Runs spider to crawl NetCDF files on a HTTP file service and dumps the URL list to a CSV file."
+        help="Runs spider to crawl NetCDF files on a HTTP file service and writes the URL list to a CSV file."
         )
 
     subparser.add_argument("--url",
@@ -115,6 +115,27 @@ def create_parser():
                         type=type(''),
                         help="Start directory",
                         action="store")
+
+    # from-spider command
+    subparser = subparsers.add_parser(
+        'from-spider',
+        prog="birdfeeder from-spider",
+        help="Runs spider to crawl NetCDF files on a HTTP file service and publishes them to Solr."
+        )
+
+    subparser.add_argument("--url",
+                        dest='url',
+                        required=True,
+                        type=type(''),
+                        help="HTTP file service URL",
+                        action="store")
+    subparser.add_argument("--depth",
+                        dest='depth',
+                        required=False,
+                        type=type(0),
+                        default=100,
+                        help="Depth level for crawler. Default: 100",
+                        action="store")
    
     return parser
 
@@ -123,7 +144,7 @@ def execute(args):
     if args.verbose:
         logger.setLevel(logging.DEBUG)
     if args.command == 'spider':
-        dump_from_spider(url=args.url, depth=args.depth, filename=args.output)
+        run_spider(url=args.url, depth=args.depth, filename=args.output)
     elif args.command == 'clear':
         clear(service=args.service)
     elif args.command == 'from-thredds':
@@ -131,6 +152,10 @@ def execute(args):
                           maxrecords=args.maxrecords, batch_size=args.batch_size)
     elif args.command == 'from-directory':
         feed_from_directory(service=args.service, start_dir=args.start_dir,
+                            maxrecords=args.maxrecords,
+                            batch_size=args.batch_size)
+    elif args.command == 'from-spider':
+        feed_from_spider(service=args.service, url=args.url, depth=args.depth,
                             maxrecords=args.maxrecords,
                             batch_size=args.batch_size)
     logger.info('Done.')

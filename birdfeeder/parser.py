@@ -1,6 +1,7 @@
 import os
 from netCDF4 import Dataset
 import threddsclient
+from birdfeeder import spider
 from dateutil import parser as dateparser
 
 import logging
@@ -46,6 +47,28 @@ class ThreddsParser(Parser):
         for ds in threddsclient.crawl(self.url, depth=self.depth):
             yield self.parse(ds)
 
+            
+class SpiderParser(Parser):
+    def __init__(self, url, depth=0):
+        Parser.__init__(self)
+        self.url = url
+        self.depth = depth
+
+    def parse(self, ds):
+        metadata = dict(
+            source=self.url,
+            title=ds.name,
+            category='spider',
+            content_type=ds.content_type,
+            last_modified=ds.last_modified,
+            resourcename=ds.ID,
+            url=ds.download_url())
+        return metadata
+    
+    def crawl(self):
+        for ds in spider.crawl(self.url, depth=self.depth):
+            yield self.parse(ds)
+            
 
 class NetCDFParser(Parser):
     SPATIAL_VARIABLES =  [
