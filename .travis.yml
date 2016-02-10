@@ -8,6 +8,9 @@ python:
 sudo: false
 install:
   - make install
+  - make start
+before_script:
+  - sleep 15
 script:
   - make testall
 #after_success:
