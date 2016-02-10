@@ -29,7 +29,7 @@ def test_walker_parser():
     
     assert datasets[0]['content_type'] == 'application/netcdf'
     assert 'tasmax' in datasets[0]['url']
-    assert datasets[0]['last_modified'] == "2015-05-06T13:22:33Z"
+    assert len(datasets[0]['last_modified']) == len("2015-05-06T13:22:33Z")
     assert datasets[0]['title'] == "tasmax_EUR-44_MPI-M-MPI-ESM-LR_rcp45_r1i1p1_MPI-CSC-REMO2009_v1_mon_200602-200612.nc"
     assert datasets[0]['resourcename'] == "/CORDEX/EUR-44/mon/tasmax_EUR-44_MPI-M-MPI-ESM-LR_rcp45_r1i1p1_MPI-CSC-REMO2009_v1_mon_200602-200612.nc"
     assert datasets[0]['size'] == '301.2K'
