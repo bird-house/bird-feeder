@@ -55,41 +55,52 @@ Help:
    $ birdfeeder -h 
    usage: birdfeeder [<options>] <command> [<args>]
 
-   Feeds Solr with Datasets (NetCDF Format) from Thredds Catalogs and File
-   System.
+     Feeds Solr with Datasets (NetCDF Format) from Thredds Catalogs and File
+     System.
 
-   optional arguments:
-     -h, --help            show this help message and exit
-     --debug               enable debug mode
-     --service SERVICE     Solr URL. Default:
-                           http://localhost:8983/solr/birdhouse
-     --maxrecords MAXRECORDS
-                           Maximum number of records to publish. Default: -1
-                           (unlimited)
-     --batch-size BATCH_SIZE
-                           Batch size of records to publish. Default: 50000
+     optional arguments:
+       -h, --help            show this help message and exit
+       -v                    enable verbose mode
+       --service SERVICE     Solr URL. Default:
+                             http://localhost:8983/solr/birdhouse
+       --maxrecords MAXRECORDS
+                             Maximum number of records to publish. Default: -1
+                             (unlimited)
+       --batch-size BATCH_SIZE
+                             Batch size of records to publish. Default: 50000
 
-   command:
-     List of available commands
+     command:
+       List of available commands
 
-     {clear,from-thredds,from-directory}
-                        Run "birdfeeder <command> -h" to get additional help.
-       clear               Clears the complete solr index. Use with caution!
-       from-thredds        Publish datasets from Thredds Catalog to Solr.
-       from-directory      Publish NetCDF files from directory to Solr.
+       {spider,walker,clear,from-thredds,from-walker,from-spider}
+                             Run "birdfeeder <command> -h" to get additional help.
+         spider              Runs spider to crawl NetCDF files on a HTTP file
+                             service and writes the path list to a CSV file.
+         walker              Runs walker to crawl NetCDF files from filesystem and
+                             writes the path list to a CSV file.
+         clear               Clears the complete solr index. Use with caution!
+         from-thredds        Publish datasets from Thredds Catalog to Solr.
+         from-walker         Publish NetCDF files from directory to Solr.
+         from-spider         Runs spider to crawl NetCDF files on a HTTP file
+                             service and publishes them to Solr.
 
-
-Parse a Thredds catalog (recursively until depth level 2):
+Parse a Thredds catalog (recursively until depth level 2) and publish to Solr:
 
 .. code-block:: sh
 
    $ birdfeeder from-thredds --catalog-url http://example.com/thredds/catalog.xml --depth=2
 
 
-Parse local NetCDF files:
+Parse NetCDF files from local directory and publish to Solr:
 
 .. code-block:: sh
 
-   $ birdfeeder from-directory --start-dir /home/data/myarchive
+   $ birdfeeder from-walker --start-dir /home/data/myarchive
+
+Run spider to get NetCDF file URLs from HTTP file service and write ot CSV file:
+
+.. code-block:: sh
+
+   $ birdfeeder spider --url http://example.com/datasets --depth 2 -o out.csv
 
 

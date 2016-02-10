@@ -1,6 +1,12 @@
 Change History
 **************
 
+0.2.0 (2016-02-10)
+==================
+
+* added spider to parse netcdf files for file-services.
+* refactored directory walker.
+
 0.1.2 (2015-09-18)
 ==================
 
