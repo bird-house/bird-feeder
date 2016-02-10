@@ -1,6 +1,6 @@
 import sys
 
-from birdfeeder.client import run_spider, clear, feed_from_thredds, feed_from_directory, feed_from_spider
+from birdfeeder.client import write_spider, write_walker, clear, feed_from_thredds, feed_from_directory, feed_from_spider
 
 import logging
 logging.basicConfig(format='%(message)s', level=logging.WARN)

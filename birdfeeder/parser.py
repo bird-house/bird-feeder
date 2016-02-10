@@ -58,8 +58,9 @@ class SpiderParser(Parser):
             category='spider',
             content_type=ds.content_type,
             last_modified=ds.last_modified,
-            resourcename=ds.ID,
-            url=ds.download_url )
+            resourcename=ds.path,
+            url=ds.download_url,
+            size=ds.size )
         return metadata
     
     def crawl(self):
@@ -81,7 +82,7 @@ class WalkerParser(Parser):
             category = "files",
             url = dataset.url,
             content_type = dataset.content_type,
-            resourcename = dataset.resourcename,
+            resourcename = dataset.path,
             variable = dataset.variable,
             variable_long_name = dataset.variable_long_name,
             cf_standard_name = dataset.cf_standard_name,
@@ -94,6 +95,7 @@ class WalkerParser(Parser):
             frequency = dataset.frequency,
             creation_date = dataset.creation_date,
             last_modified=dataset.last_modified,
+            size=dataset.size,
             )
         return metadata
 

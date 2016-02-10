@@ -2,6 +2,8 @@ import os
 from netCDF4 import Dataset as NCDataset
 from dateutil import parser as dateparser
 
+from birdfeeder.utils import humanize_filesize
+
 import logging
 logger = logging.getLogger(__name__)
 
@@ -16,7 +18,10 @@ SPATIAL_VARIABLES =  [
 
 class Dataset(object):
     def __init__(self, filepath, basedir='/'):
-        self.path = os.path.sep + os.path.relpath(filepath, basedir) 
+        self.filepath = filepath
+        self.path = os.path.sep + os.path.relpath(filepath, basedir)
+        self.bytes = os.path.getsize(filepath)
+        self.size = humanize_filesize(self.bytes) 
         self.name = os.path.basename(filepath)
         self.url = 'file://' + filepath
         self.content_type = 'application/netcdf'
@@ -73,13 +78,6 @@ class Dataset(object):
             return self.attributes['creation_date'][0]
         else:
             return None
-
-    @property
-    def size(self):
-        if 'size' in self.attributes:
-            return self.attributes['size'][0]
-        else:
-            return ''
 
     @property
     def last_modified(self):

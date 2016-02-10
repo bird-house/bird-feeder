@@ -1,22 +1,23 @@
 import pysolr
 import threddsclient
+from timeit import default_timer as timer
+from datetime import timedelta
+import csv
 
 from birdfeeder.parser import ThreddsParser, WalkerParser, SpiderParser
-from birdfeeder import spider
-from birdfeeder import walker
 
 import logging
 logger = logging.getLogger(__name__)
 
 
-def run_spider(url, depth=0, filename='out.csv'):
+def write_spider(url, depth=0, filename='out.csv'):
     logger.info('Starting spider %s, depth=%s ...', url, depth)
-    spider.write_datasets(url, depth=depth, filename=filename)
+    write(parser=SpiderParser(url, depth=depth), filename=filename)
 
     
-def run_walker(start_dir, filename='out.csv'):
+def write_walker(start_dir, filename='out.csv'):
     logger.info('Starting walker %s ...', start_dir)
-    #walker.write_datasets(url, depth=depth, filename=filename)
+    write(parser=WalkerParser(start_dir), filename=filename)
 
     
 def clear(service):
@@ -56,5 +57,34 @@ def publish(service, parser, maxrecords=-1, batch_size=50000):
             break
     logger.info("publish %d records", len(records))
     solr.add(records)
+
+def write(parser, filename='out.csv', batch_size=1000):
+    start = timer()
+    with open(filename, 'w') as csvfile:
+        fieldnames = ['path', 'name', 'last_modified', 'size']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writeheader()
+        
+        ds_counter = 0
+        records = []
+        for ds in parser.crawl():
+            records.append({'path': ds['resourcename'],
+                             'name': ds['title'],
+                             'last_modified': ds['last_modified'],
+                             'size': ds['size']})
+            if len(records) > batch_size:
+                writer.writerows(records)
+                end = timer()
+                elapsed_time = timedelta(seconds=int(end-start))
+                logger.info('{0} datasets written, elapsed time = {1} ...'.format(ds_counter, elapsed_time))
+                records = [] # reset records
+            ds_counter += 1
+        # write last records
+        if len(records) > 0:
+            writer.writerows(records)
+    end = timer()
+    elapsed_time = timedelta(seconds=int(end-start))
+    logger.info('{0} datasets written to {1}. Total elapsed time = {2}.'.format(ds_counter, filename, elapsed_time))
 
 

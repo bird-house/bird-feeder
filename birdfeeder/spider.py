@@ -3,9 +3,6 @@ import os
 import urlparse
 from bs4 import BeautifulSoup 
 import requests
-import csv
-from timeit import default_timer as timer
-from datetime import timedelta
 from dateutil import parser as dateparser
 
 import logging
@@ -30,36 +27,6 @@ def construct_url(url, href):
         cat = relative_path + "/" + href
     #logger.debug(cat)
     return cat
-
-def write_datasets(url, depth=0, filename='out.csv', batch_size=1000):
-    start = timer()
-    with open(filename, 'w') as csvfile:
-        fieldnames = ['path', 'name', 'last_modified', 'size']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-
-        writer.writeheader()
-        
-        ds_counter = 0
-        records = []
-        for ds in crawl(url, depth):
-            records.append({'path': ds.path,
-                             'name': ds.name,
-                             'last_modified': ds.last_modified,
-                             'size': ds.size})
-            if len(records) > batch_size:
-                writer.writerows(records)
-                end = timer()
-                elapsed_time = timedelta(seconds=int(end-start))
-                logger.info('{0} datasets written, elapsed time = {1} ...'.format(ds_counter, elapsed_time))
-                records = [] # reset records
-            ds_counter += 1
-        # write last records
-        if len(records) > 0:
-            writer.writerows(records)
-    end = timer()
-    elapsed_time = timedelta(seconds=int(end-start))
-    logger.info('{0} datasets written to {1}. Total elapsed time = {2}.'.format(ds_counter, filename, elapsed_time))
-
 
 class Dataset(object):
     def __init__(self, url, name=None, last_modified=None, size=None):
