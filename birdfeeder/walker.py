@@ -148,8 +148,8 @@ def crawl(start_dir):
     for directory, subdirs, files in os.walk(start_dir):
         # loop over files in this directory
         for filename in files:
-            # ignore hidden files and thumbnails
-            if not filename[0] == '.' and not 'thumbnail' in filename and not filename.endswith('.xml'):
+            # only parse .nc files
+            if filename.endswith('.nc'):
                 filepath = os.path.join(directory, filename)
                 yield Dataset(filepath)
 
