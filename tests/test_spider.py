@@ -102,7 +102,7 @@ def test_read_xml_dmi_2():
         assert 'tasmax' in ds.url
     assert page.datasets[0].ID == "tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc"
     assert page.datasets[0].name == "tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc"
-    assert page.datasets[0].last_modified == "2015-02-12T14:37"
+    assert page.datasets[0].last_modified == "2015-02-12T14:37:00Z"
     assert page.datasets[0].size == "5.0M"
     assert page.datasets[0].url == "http://nowhere.org/cordex/tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc"
     assert page.datasets[0].download_url == "http://nowhere.org/cordex/tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc"

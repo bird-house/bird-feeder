@@ -6,6 +6,7 @@ import requests
 import csv
 from timeit import default_timer as timer
 from datetime import timedelta
+from dateutil import parser as dateparser
 
 import logging
 logger = logging.getLogger(__name__)
@@ -121,7 +122,7 @@ class Page(object):
                         name = link.text.strip()
                         index = index_lookup.get(name)
                         attr = strlist[index+1].split()
-                        last_modified = "{0}T{1}".format(attr[0], attr[1])
+                        last_modified = dateparser.parse( "{0} {1}".format(attr[0], attr[1]) ).strftime('%Y-%m-%dT%H:%M:%SZ')
                         size = attr[2]
                         self.datasets.append(Dataset(url, name, last_modified, size))
                     except:

@@ -34,5 +34,5 @@ def test_spider_parser():
     
     assert datasets[0]['content_type'] == 'application/netcdf'
     assert datasets[0]['url'] == "http://ensemblesrt3.dmi.dk/data/CORDEX/AFR-44/KNMI/MOHC-HadGEM2-ES/rcp45/r1i1p1/KNMI-RACMO22T/v1/mon/tasmax/v20150224/tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc"
-    assert datasets[0]['last_modified'] == "2015-02-12T14:37"
+    assert datasets[0]['last_modified'] == "2015-02-12T14:37:00Z"
     assert datasets[0]['title'] == "tasmax_AFR-44_MOHC-HadGEM2-ES_rcp45_r1i1p1_KNMI-RACMO22T_v1_mon_200601-201012.nc"
