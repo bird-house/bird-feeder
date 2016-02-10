@@ -5,9 +5,10 @@ from nose.plugins.attrib import attr
 
 from birdfeeder import walker
 
+from tests.common import TESTDATA
+
 def test_dataset():
-    #raise SkipTest
-    ds = walker.Dataset("/home/pingu/sandbox/birdhouse/flyingpigeon/tests/testdata/cordex/tasmax_EUR-44_MPI-M-MPI-ESM-LR_rcp45_r1i1p1_MPI-CSC-REMO2009_v1_mon_200602-200612.nc")
+    ds = walker.Dataset(TESTDATA['cordex_tasmax.nc'])
     
     print ds
 
