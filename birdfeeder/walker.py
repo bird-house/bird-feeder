@@ -10,17 +10,22 @@ SPATIAL_VARIABLES =  [
     'latitude', 'lat',
     'altitude', 'alt', 'level', 'height',
     'rotated_pole',
+    'rotated_latitude_longitude',
     'time']
 
 
 class Dataset(object):
     def __init__(self, filepath):
+        self.path = filepath
         self.name = os.path.basename(filepath)
         self.url = 'file://' + filepath
         self.content_type = 'application/netcdf'
         self.resourcename = filepath
         self.attributes = {}
         self._parse(filepath)
+
+    def __str__(self):
+        return "attributes={0}".format(self.attributes)
 
     @property
     def variable(self):
@@ -64,14 +69,28 @@ class Dataset(object):
 
     @property
     def creation_date(self):
-        return self.attributes.get('creation_date')
+        if 'creation_date' in self.attributes:
+            return self.attributes['creation_date'][0]
+        else:
+            return None
+
+    @property
+    def size(self):
+        if 'size' in self.attributes:
+            return self.attributes['size'][0]
+        else:
+            return ''
+
+    @property
+    def last_modified(self):
+        return self.creation_date
         
     def _add_attribute(self, key, value):
         if not key in self.attributes:
             self.attributes[key] = [] 
         self.attributes[key].append(value)
 
-    def _parse(filepath):
+    def _parse(self, filepath):
         filepath = os.path.abspath(filepath)
         logger.debug("parse %s", filepath)
 
@@ -102,7 +121,7 @@ class Dataset(object):
                     continue
                 if '_bnds' in key.lower():
                     continue
-                if key.lower() in self.SPATIAL_VARIABLES:
+                if key.lower() in SPATIAL_VARIABLES:
                     continue
                 self._add_attribute('variable', key)
                 self._add_attribute('variable_long_name', getattr(variable, 'long_name', None) )
@@ -118,8 +137,6 @@ class Dataset(object):
                 ds.close()
             except:
                 pass
-
-        return metadata
 
  
 def crawl(start_dir):
