@@ -5,7 +5,7 @@ from nose.plugins.attrib import attr
 
 from birdfeeder import walker
 
-from tests.common import TESTDATA
+from tests.common import TESTDATA, TESTDATA_PATH
 
 def test_dataset():
     ds = walker.Dataset(TESTDATA['cordex_tasmax.nc'])
@@ -19,5 +19,10 @@ def test_dataset():
     assert 'tasmax' in ds.url
     assert 'tasmax' in ds.path
     assert ds.size == ''
-    
+
+
+def test_crawl():
+    datasets = [ds for ds in walker.crawl(start_dir=TESTDATA_PATH)]
+    assert len(datasets) == 1
+    assert ds.name == 'tasmax_EUR-44_MPI-M-MPI-ESM-LR_rcp45_r1i1p1_MPI-CSC-REMO2009_v1_mon_200602-200612.nc'
     
